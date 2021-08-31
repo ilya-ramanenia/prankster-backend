@@ -5,18 +5,13 @@ require "./app_ext.rb"
 before do
   content_type :json
 end
+
 not_found do
   status 404
+  content_type :html
   erb :not_found
 end
 
-post "/debug/test" do
-  param1 = params[:param1]
-  param2 = params[:param2]
-  
-  response_json = { "p1" => param1, "p2" => param2 }
-  success(201, response_json)
-end
 get "/debug/devices" do
   success(200, Device.all.as_json)
 end
