@@ -1,9 +1,10 @@
 source "https://rubygems.org"
 
-gem "bundler"
 gem "rack"
 gem "sinatra"
 gem "sinatra-activerecord"
 gem "postgresql"
 gem "rake"
 gem "json"
+gem "logger-colors"
+gem "sinatra-contrib"
