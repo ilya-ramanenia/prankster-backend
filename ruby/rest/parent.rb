@@ -1,113 +1,57 @@
 
+## Create parent (Entry point for child user)
+
 post "/parent" do
-  token = params[:token]
-  name = params[:name]
-  device = Device.find_by(token: token)
-  if !device
-    return error(401, "unauthorised")
+  name = params[:name].to_s
+  device_id = params[:device_id].to_s
+
+  model = Parent.new
+  model.auth_token = SecureRandom.uuid
+  model.last_device_id = device_id
+  model.name = name
+
+  model.save
+  
+  successResponse(201, response: model.as_json)
+end
+
+
+## Update parent
+
+post "/parent/:id" do
+  id = params[:id].to_i
+  auth_token = params[:auth_token].to_s
+
+  parent=Parent.find_by(id: id)
+  if parent == nil
+    return errorResponse(401, error: "unauthorised", debug: "no parent id: #{id}")
   end
 
-  if device.account
-    return error(403, "account already created")
+  if parent.auth_token != auth_token
+    return errorResponse(401, error: "unauthorised", debug: "unauthorised")
   end
 
-  parent = Parent.new_(device, name)
+  parent.name = params[:name].to_s
   parent.save
   
-  success(201, parent.as_json)
+  successResponse(200, response: parent.as_json)
 end
+
+
+## Get parent info
 
 get "/parent/:id" do
-  parent_id = params[:id].to_i
-  token = params[:token]
-  device = Device.find_by(token: token)
-  if !device
-    return error(401, "unauthorised")
+  id = params[:id].to_i
+  auth_token = params[:auth_token].to_s
+
+  parent=Parent.find_by(id: id)
+  if parent == nil
+    return errorResponse(401, error: "unauthorised", debug: "no parent id: #{id}")
   end
 
-  parent=device.account&.parent
-  if !parent
-    return error(403, "device doesn't have account")
+  if parent.auth_token != auth_token
+    return errorResponse(401, error: "unauthorised", debug: "unauthorised")
   end
 
-  if parent.account.id != parent_id
-    return error(403, "no access to this parent")
-  end
-
-  success(200, parent.as_json)
-end
-
-post "/parent/:id/assign_child" do
-  parent_id = params[:id].to_i
-  child_id = params[:child_id].to_i
-  token = params[:token]
-  device = Device.find_by(token: token)
-  if !device
-    return error(401, "unauthorised")
-  end
-
-  parent=device.account&.parent
-  if !parent
-    return error(403, "device doesn't have account")
-  end
-
-  if parent.account.id != parent_id
-    return error(403, "no access to this parent")
-  end
-
-  child = Account.find_by(id: child_id).child
-  if !child
-    return error(403, "no child found for this id")
-  end
-
-  if child.parent_id
-    return error(403, "child already assigned")
-  end
-
-  child.parent_id = parent.id
-  child.save
-  parent.child_id = child.id
-  parent.save
-
-  success(200, parent.as_json)
-end
-
-get "/child/:id" do
-  child_id = params[:id].to_i
-  token = params[:token]
-  device = Device.find_by(token: token)
-  if !device
-    return error(401, "unauthorised")
-  end
-
-  child=device.account&.child
-  if !child
-    return error(403, "device doesn't have account")
-  end
-
-  if child.account.id != child_id
-    return error(403, "no access to this child")
-  end
-
-  success(200, child.as_json)
-end
-
-get "/child" do
-  child_id = params[:id].to_i
-  token = params[:token]
-  device = Device.find_by(token: token)
-  if !device
-    return error(401, "unauthorised")
-  end
-
-  child=device.account&.child
-  if !child
-    return error(403, "device doesn't have account")
-  end
-
-  if child.account.id != child_id
-    return error(403, "no access to this child")
-  end
-
-  success(200, child.as_json)
+  successResponse(200, response: parent.as_json)
 end

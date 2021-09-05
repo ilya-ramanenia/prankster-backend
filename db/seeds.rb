@@ -15,21 +15,21 @@ destroy_all
 
 #------------------
 
+## TODO: user constructors
 def seed
-    child = Child.new_(child_device, "Ребенок")
-    child.save
+    child_request = ChildRequest.new
+    child_request.name = "ребенок тест"
+    child_request.connect_key = "CONNECT_KEY"
+    child_request.save
     
-    parent = Parent.new_(parent_device, "Родитель")
-    parent.save
-    
-    child.parent_id = parent.id
-    parent.child_id = child.id
-    parent.save
-    child.save           
+    parent = Parent.new
+    parent.name = "родитель тест"
+    parent.auth_token = "TOKEN"
+    parent.save         
 end
 
-# seed
+seed
 
 #------------------
 
-# put_all
+put_all

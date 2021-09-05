@@ -1,22 +1,24 @@
 
-post "/child" do
-  token = params[:token]
-  name = params[:name]
-  device = Device.find_by(token: token)
-  if !device
-    return error(401, "unauthorised")
+## Get child info
+
+get "/child/:id" do
+  id = params[:id].to_i
+  auth_token = params[:auth_token].to_s
+
+  parent=Parent.find_by(auth_token: auth_token)
+  if parent == nil
+    return errorResponse(401, error: "unauthorised")
   end
 
-  if device.account
-    return error(403, "account already created")
+  model=Child.find_by(id: id)
+
+  if model == nil
+    return errorResponse(403, error: "not found")
   end
 
-  child = Child.new_(device, name)
-  child.save
-  
-  success(201, child.as_json)
+  if model.parent_id.include? parent.id == false
+    return errorResponse(401, error: "unauthorised", debug: "no access to child id: #{id}")
+  end
 
-
-
-  
+  successResponse(200, response: model.as_json)
 end

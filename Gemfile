@@ -6,5 +6,8 @@ gem "sinatra-activerecord"
 gem "postgresql"
 gem "rake"
 gem "json"
+
+gem "rerun"
 gem "logger-colors"
-gem "sinatra-contrib"
+
+gem "array_enum"

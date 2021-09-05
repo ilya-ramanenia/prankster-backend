@@ -16,67 +16,69 @@ ActiveRecord::Schema.define(version: 2021_09_01_213817) do
   enable_extension "plpgsql"
 
   create_table "child", force: :cascade do |t|
-    t.bigint "parent_id"
-    t.bigint "region_status_id"
-    t.bigint "region_setting_id"
-    t.float "last_location_lat"
-    t.float "last_location_long"
-    t.datetime "last_location_timestamp"
+    t.bigint "parent_id", array: true
+    t.bigint "child_request_id"
+    t.bigint "region_id", array: true
+    t.bigint "region_status_id", array: true
+    t.string "name"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.index ["child_request_id"], name: "index_child_on_child_request_id"
     t.index ["parent_id"], name: "index_child_on_parent_id"
-    t.index ["region_setting_id"], name: "index_child_on_region_setting_id"
+    t.index ["region_id"], name: "index_child_on_region_id"
     t.index ["region_status_id"], name: "index_child_on_region_status_id"
   end
 
   create_table "child_request", force: :cascade do |t|
+    t.bigint "child_id"
     t.string "name"
     t.string "device_id"
-    t.string "token"
+    t.string "connect_key"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.index ["child_id"], name: "index_child_request_on_child_id"
   end
 
   create_table "parent", force: :cascade do |t|
-    t.bigint "child_id"
-    t.bigint "region_id"
+    t.bigint "child_id", array: true
+    t.bigint "created_region_id", array: true
+    t.string "name"
+    t.string "last_device_id"
+    t.string "auth_token"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["child_id"], name: "index_parent_on_child_id"
-    t.index ["region_id"], name: "index_parent_on_region_id"
+    t.index ["created_region_id"], name: "index_parent_on_created_region_id"
   end
 
   create_table "region", force: :cascade do |t|
     t.bigint "parent_id"
+    t.bigint "child_id", array: true
+    t.bigint "region_status_id", array: true
+    t.bigint "last_status_id"
     t.string "name"
     t.float "lat"
     t.float "long"
     t.integer "radius"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.index ["child_id"], name: "index_region_on_child_id"
+    t.index ["last_status_id"], name: "index_region_on_last_status_id"
     t.index ["parent_id"], name: "index_region_on_parent_id"
-  end
-
-  create_table "region_setting", force: :cascade do |t|
-    t.bigint "child_id"
-    t.bigint "region_id"
-    t.boolean "notify_inside"
-    t.boolean "notify_outside"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
-    t.index ["child_id"], name: "index_region_setting_on_child_id"
-    t.index ["region_id"], name: "index_region_setting_on_region_id"
+    t.index ["region_status_id"], name: "index_region_on_region_status_id"
   end
 
   create_table "region_status", force: :cascade do |t|
     t.bigint "child_id"
     t.bigint "region_id"
-    t.boolean "inside"
-    t.boolean "outside"
+    t.string "events", default: [], null: false, array: true
+    t.float "lat"
+    t.float "long"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["child_id"], name: "index_region_status_on_child_id"
     t.index ["region_id"], name: "index_region_status_on_region_id"
   end
 
+  add_foreign_key "region", "region_status", column: "last_status_id"
 end

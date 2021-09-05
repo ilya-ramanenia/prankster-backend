@@ -2,7 +2,8 @@ development:
   adapter: postgresql
   encoding: unicode
   pool: 2
-  database: db/prankster
+  database: db/dev
+
 production:
   adapter: postgresql
   encoding: unicode
