@@ -12,7 +12,8 @@ Simple server made together with little brother as home project to work as backe
 
 `bundle exec rackup`
 
-`rake db:drop db:create db:migrate` - wipes out the whole app database, recreates it and then goes through every migration to update the schema (db/schema.rb or db/structure.sql)
+*DB+schema reset:*
+`rake db:drop db:create db:migrate`
 
 `rake db:reset` OR `rake db:drop db:schema:load db:seed` - wipes out the whole app database but it does not update the schema, and then populates with seed data
 
@@ -22,5 +23,6 @@ Simple server made together with little brother as home project to work as backe
 
 `heroku login`
 
-`heroku pg:reset`
+*DB+schema reset:*
+`heroku pg:reset --confirm prankster-app`
 `heroku run rake db:migrate`
