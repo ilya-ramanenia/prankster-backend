@@ -1,5 +1,6 @@
 ENV['RACK_ENV'] = ENV['RACK_ENV'] || 'development'
 
+require 'uri'
 require 'sinatra/activerecord/rake'
 
 namespace :db do
