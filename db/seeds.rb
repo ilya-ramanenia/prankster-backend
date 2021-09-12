@@ -17,14 +17,15 @@ destroy_all
 
 ## TODO: user constructors
 def seed
-    child_request = ChildRequest.new
-    child_request.name = "ребенок тест"
-    child_request.connect_key = "CONNECT_KEY"
-    child_request.save
+    child = Child.new
+    child.name = "ребенок тест"
+    child.auth_token = "CHILD_TOKEN"
+    child.connect_key = "CONNECT_KEY"
+    child.save
     
     parent = Parent.new
     parent.name = "родитель тест"
-    parent.auth_token = "TOKEN"
+    parent.auth_token = "PARENT_TOKEN"
     parent.save         
 end
 

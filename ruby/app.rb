@@ -8,8 +8,9 @@ require './db/models.rb'
 
 require_relative './rest/_debug.rb'
 require_relative './rest/child.rb'
-require_relative './rest/child_request.rb'
+require_relative './rest/child.rb'
 require_relative './rest/parent.rb'
+require_relative './rest/device_info.rb'
 
 before do
   content_type :json
@@ -22,7 +23,7 @@ not_found do
   erb :not_found
 end
 
-def successResponse(code, response: {})
+def success_response(code, response: {})
   @result = {"status" => "ok"}
   @result["response"] = response
   status code
@@ -32,7 +33,7 @@ def successResponse(code, response: {})
   # erb :json_html
 end
 
-def errorResponse(code, error: "", debug: nil)
+def error_response(code, error: "", debug: nil)
   @result = {"status" => "error"}
   @result["error"] = error
   if debug != nil
@@ -44,3 +45,5 @@ def errorResponse(code, error: "", debug: nil)
   # content_type :html
   # erb :json_html
 end
+
+require_relative './push/push.rb'

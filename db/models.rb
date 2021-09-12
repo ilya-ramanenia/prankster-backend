@@ -3,37 +3,49 @@ require 'array_enum'
 
 ## https://www.rubydoc.info/gems/activemodel/ActiveModel/Serializers/JSON
 
+# class User < ActiveRecord::Base
+#   has_many :books, :foreign_key => 'author_id'
+# end
+
+# class Book < ActiveRecord::Base
+#   belongs_to :author, :class_name => 'User', :foreign_key => 'author_id', :validate => true
+# ## or
+#   belongs_to :author, :class_name => 'User', :inverse_of => 'author_id', :validate => true
+# end
+
 class BaseModel < ActiveRecord::Base
   @abstract_class = true
 
   # TODO: Move super(except: [:id, :device_id, :created_at] into parent
 end
 
-
-class ChildRequest < BaseModel
-  belongs_to  :created_child, :class_name => "Child", :inverse_of => "from_child_request"
-
-  def as_json(*)
-    super(
-      except: [:created_at], 
-      include: :created_child)
-  end
-end
-
 class Parent < BaseModel
-  has_many  :child
-  has_many  :created_region, :class_name => "Region"
+  has_one     :device_info
+
+  has_many    :child
+  has_many    :created_region, :class_name => "Region"
+
+  def self.build(name:)
+    model = Parent.new
+
+    model.name = name
+    model.auth_token = SecureRandom.uuid
+    model.child_id = []
+    model.created_region_id = []
+
+    return model
+  end
 
   def as_json(*)
     super(
-      except: [:created_at],
       include: :child,
-      include: :created_region)
+      include: :created_region_id)
   end
 end
 
 class Child < BaseModel
-  has_one   :from_child_request, :class_name => "ChildRequest", dependent: :destroy
+  has_one     :device_info
+
   has_many  :parent
   has_many  :assigned_to_region, :class_name => "Region"
 
@@ -41,7 +53,22 @@ class Child < BaseModel
 
   def as_json(*)
     super(
-      except: [:region_id, :region_status_id])
+      except: [
+        :region_id, 
+        :region_status_id])
+  end
+
+  def self.build(name:)
+    model = Child.new
+
+    model.name = name
+    model.auth_token = SecureRandom.uuid
+    model.connect_key = SecureRandom.uuid
+    model.parent_id = []
+    model.assigned_to_region_id = []
+    model.region_status_id = []
+
+    return model
   end
 
       # TODO: 
@@ -56,19 +83,6 @@ class Child < BaseModel
   # def assigned_to_region
   #   super || {}
   # end
-
-  def self.build(child_request:, parent:)
-    model = Child.new
-
-    # model.from_child_request = child_request
-    # model.parent_ids << parent
-
-    model.child_request_id = child_request.id
-    model.name = child_request.name
-    model.parent_id = [ parent.id ]
-
-    return model
-  end
 end
 
 class Region  < BaseModel
@@ -80,8 +94,10 @@ class Region  < BaseModel
 
   def as_json(*)
     super(
-      only: [:name, :lat, :long],
-      # except: [:id, :created_at],
+      only: [
+        :name, 
+        :lat, 
+        :long],
       include: {   parent_created: {
                       only: [:name] } },
       include: {   child_assigned: {
@@ -99,16 +115,21 @@ class RegionStatus  < BaseModel
 
   def as_json(*)
     super(
-      only: [:event, :created_at])
+      only: [
+        :event, 
+        :created_at])
   end
 end
 
-# class User < ActiveRecord::Base
-#   has_many :books, :foreign_key => 'author_id'
-# end
+class DeviceInfo < BaseModel
+  enum platform: [ :ios, :android ]
 
-# class Book < ActiveRecord::Base
-#   belongs_to :author, :class_name => 'User', :foreign_key => 'author_id', :validate => true
-# ## or
-#   belongs_to :author, :class_name => 'User', :inverse_of => 'author_id', :validate => true
-# end
+  belongs_to  :child
+  belongs_to  :parent
+
+  def as_json(*)
+    super(
+      include: :child,
+      include: :parent)
+  end
+end
