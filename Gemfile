@@ -1,5 +1,5 @@
 source "https://rubygems.org"
-ruby "2.6.6"
+ruby "2.7.2"
 
 gem 'rack'
 gem 'sinatra'
@@ -8,7 +8,7 @@ gem 'postgresql'
 gem 'rake'
 gem 'json'
 gem 'array_enum'
-gem 'rpush'
-gem 'memoist'
+# gem 'rpush'
+# gem 'memoist'
 
 gem 'rerun'
