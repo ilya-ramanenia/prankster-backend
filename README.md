@@ -15,7 +15,7 @@ Simple server made together with little brother as home project to work as backe
 *DB+schema reset:*
 `rake db:drop db:create db:migrate`
 
-`rake db:reset` OR `rake db:drop db:schema:load db:seed` - wipes out the whole app database but it does not update the schema, and then populates with seed data
+`rake db:seed` - populates with seed data
 
 **Heroku:**
 
