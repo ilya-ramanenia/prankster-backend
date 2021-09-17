@@ -16,19 +16,13 @@ ActiveRecord::Schema.define(version: 2021_09_06_153559) do
   enable_extension "plpgsql"
 
   create_table "child", force: :cascade do |t|
-    t.bigint "device_info_id"
-    t.bigint "parent_id", null: false, array: true
-    t.bigint "assigned_to_region_id", null: false, array: true
-    t.bigint "region_status_id", null: false, array: true
+    t.bigint "parent_id"
     t.string "name"
     t.string "auth_token"
     t.string "connect_key"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.index ["assigned_to_region_id"], name: "index_child_on_assigned_to_region_id"
-    t.index ["device_info_id"], name: "index_child_on_device_info_id"
     t.index ["parent_id"], name: "index_child_on_parent_id"
-    t.index ["region_status_id"], name: "index_child_on_region_status_id"
   end
 
   create_table "device_info", force: :cascade do |t|
@@ -43,22 +37,16 @@ ActiveRecord::Schema.define(version: 2021_09_06_153559) do
   end
 
   create_table "parent", force: :cascade do |t|
-    t.bigint "device_info_id"
-    t.bigint "child_id", null: false, array: true
-    t.bigint "created_region_id", null: false, array: true
     t.string "name"
     t.string "auth_token"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.index ["child_id"], name: "index_parent_on_child_id"
-    t.index ["created_region_id"], name: "index_parent_on_created_region_id"
-    t.index ["device_info_id"], name: "index_parent_on_device_info_id"
   end
 
   create_table "region", force: :cascade do |t|
     t.bigint "parent_created_id", null: false
-    t.bigint "child_id", null: false, array: true
-    t.bigint "region_status_id", null: false, array: true
+    t.bigint "child_id"
+    t.bigint "region_status_id"
     t.bigint "last_status_id"
     t.string "name"
     t.float "lat"
@@ -153,5 +141,6 @@ ActiveRecord::Schema.define(version: 2021_09_06_153559) do
     t.index ["delivered", "failed", "processing", "deliver_after", "created_at"], name: "index_rpush_notifications_multi", where: "((NOT delivered) AND (NOT failed))"
   end
 
+  add_foreign_key "region", "parent", column: "parent_created_id"
   add_foreign_key "region", "region_status", column: "last_status_id"
 end

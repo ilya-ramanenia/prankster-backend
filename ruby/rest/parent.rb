@@ -1,3 +1,5 @@
+require 'sinatra/activerecord'
+
 
 ## Create Parent (Entry point for parent user)
 
@@ -149,4 +151,24 @@ get "/parent/:id/child/:child_id" do
   end
 
   success_response(200, response: child.as_json)
+end
+
+
+## Get all Children (of Parent)
+
+get "/parent/:id/child" do
+  id = params[:id].to_i
+  auth_token = params[:auth_token].to_s
+  name = params[:name].to_s
+
+  parent = Parent.find_by(id: id)
+  if parent == nil
+    return error_response(401, error: "unauthorised", debug: "no parent id: #{id}")
+  end
+
+  if parent.auth_token != auth_token
+    return error_response(401, error: "unauthorised")
+  end
+
+  success_response(200, response: parent.child.map { |c| [c.id, c.name] })
 end

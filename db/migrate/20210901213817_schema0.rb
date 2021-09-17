@@ -6,10 +6,6 @@ class Schema0 < ActiveRecord::Migration[6.0]
 
   def change
     create_table :parent do |t|
-      t.references :device_info
-      t.references :child, array: true, null: false
-      t.references :created_region, array: true, null: false
-
       t.string :name
       t.string :auth_token
 
@@ -17,10 +13,7 @@ class Schema0 < ActiveRecord::Migration[6.0]
     end
 
     create_table :child do |t|
-      t.references :device_info
-      t.references :parent, array: true, null: false
-      t.references :assigned_to_region, array: true, null: false
-      t.references :region_status, array: true, null: false
+      t.references :parent
 
       t.string :name
       t.string :auth_token
@@ -42,10 +35,10 @@ class Schema0 < ActiveRecord::Migration[6.0]
     end
 
     create_table :region do |t|
-      t.references :parent_created, null: false
-      t.references :child, array: true, null: false
+      t.references :parent_created, null: false, foreign_key: { to_table: 'parent' }
+      t.references :child
 
-      t.references :region_status, array: true, null: false
+      t.references :region_status
       t.references :last_status, foreign_key: { to_table: 'region_status' }
 
       t.string :name

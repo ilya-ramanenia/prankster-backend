@@ -7,7 +7,7 @@ post "/child/:id/device_info" do
   platform = params[:platform].to_s
   push_id = params[:push_id].to_s
 
-  child=Child.find_by(id: id)
+  child = Child.find_by(id: id)
   if child == nil
     return error_response(403, error: "not found", debug: "no child found with id: #{id}")
   end
@@ -19,7 +19,7 @@ post "/child/:id/device_info" do
   model = DeviceInfo.new
   model.platform = platform
   model.push_id = push_id
-  model.child_id = child.id
+  model.child << child
   model.save
 
   send_message_push(model, title: "WOW", body: "Successfully registered to push #{child.name}")

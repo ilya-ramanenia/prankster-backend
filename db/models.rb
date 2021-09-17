@@ -20,6 +20,7 @@ class BaseModel < ActiveRecord::Base
 end
 
 class Parent < BaseModel
+
   has_one     :device_info
 
   has_many    :child
@@ -30,33 +31,32 @@ class Parent < BaseModel
 
     model.name = name
     model.auth_token = SecureRandom.uuid
-    model.child_id = []
-    model.created_region_id = []
 
     return model
   end
 
   def as_json(*)
     super(
-      include: :child,
-      include: :created_region_id)
+      include: [
+        {
+          child: {
+            only: [
+              :id,
+              :name
+            ] 
+          }
+        }
+      ])
   end
 end
 
 class Child < BaseModel
+
   has_one     :device_info
 
-  has_many  :parent
-  has_many  :assigned_to_region, :class_name => "Region"
-
+  belongs_to  :parent
+  has_many  :region, :inverse_of => "child_assigned"
   has_many  :region_status
-
-  def as_json(*)
-    super(
-      except: [
-        :region_id, 
-        :region_status_id])
-  end
 
   def self.build(name:)
     model = Child.new
@@ -64,30 +64,34 @@ class Child < BaseModel
     model.name = name
     model.auth_token = SecureRandom.uuid
     model.connect_key = SecureRandom.uuid
-    model.parent_id = []
-    model.assigned_to_region_id = []
-    model.region_status_id = []
 
     return model
   end
 
-      # TODO: 
-  # def as_json(*)
-  #   super(
-  #     except: []
-  #     include: {    parent: {
-  #                       only: [:name] } })
-  #     include: :assigned_to_region)
-  # end
-  #
-  # def assigned_to_region
-  #   super || {}
-  # end
+  def as_json(*)
+    super(
+      include: [
+        {
+          parent: {
+            only: [
+              :id,
+              :name
+            ] 
+          }
+        },
+        :region,
+        :region_status
+      ],
+      except: [
+        :parent_id,
+      ])
+  end
 end
 
 class Region  < BaseModel
+
   belongs_to  :parent_created, :class_name => "Parent", :inverse_of => "created_region"
-  belongs_to  :child_assigned, :class_name => "Child", :inverse_of => "assigned_to_region"
+  has_one  :child_assigned, :class_name => "Child", :inverse_of => "region"
 
   has_many    :region_status, dependent: :destroy
   has_one     :last_status, :class_name => "RegionStatus", :inverse_of => "region"
@@ -98,16 +102,15 @@ class Region  < BaseModel
         :name, 
         :lat, 
         :long],
-      include: {   parent_created: {
-                      only: [:name] } },
-      include: {   child_assigned: {
-                      only: [:name] } },
-      include: :last_status)
+      include: [
+        :parent_created,
+        :child_assigned
+      ])
   end
 end
 
 class RegionStatus  < BaseModel
-  belongs_to :region
+  has_one :region
   belongs_to :child
 
   extend ArrayEnum
@@ -129,7 +132,9 @@ class DeviceInfo < BaseModel
 
   def as_json(*)
     super(
-      include: :child,
-      include: :parent)
+      include: [
+        :child,
+        :parent
+      ])
   end
 end

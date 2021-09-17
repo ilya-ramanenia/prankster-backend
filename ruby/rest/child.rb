@@ -18,7 +18,7 @@ post "/parent/:id/connect_child" do
   auth_token = params[:auth_token].to_s
   connect_key = params[:connect_key].to_s
 
-  parent=Parent.find_by(id: id)
+  parent = Parent.find_by(id: id)
   if parent == nil
     return error_response(401, error: "unauthorised", debug: "parent id: #{id}")
   end
@@ -32,14 +32,11 @@ post "/parent/:id/connect_child" do
     return error_response(403, error: "forbidden", debug: "no child with connect key: #{connect_key}")
   end
 
-  if child.parent_id.include?(parent.id)
+  if child.parent == parent
     return error_response(403, error: "forbidden", debug: "already connected to child id: #{child.id}")
   end
 
-  parent.child_id |= [child.id]
-  parent.save
-
-  child.parent_id |= [parent.id]
+  parent.child << child
   child.save
 
   success_response(200, response: child.as_json)
