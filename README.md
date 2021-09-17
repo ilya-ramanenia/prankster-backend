@@ -9,14 +9,15 @@ Simple server made together with little brother as home project to work as backe
 - `bundle install`
 
 **Localhost:**
+
 `bundle exec rerun 'rackup'`
 or simply
 `bundle exec rackup`
 
 *DB+schema reset:*
-`rake db:drop db:create db:migrate`
+`bundle exec rake db:drop db:create db:migrate`
 
-`rake db:seed` - populates with seed data
+`bundle exec rake db:seed` - populates with seed data
 
 **Heroku:**
 
