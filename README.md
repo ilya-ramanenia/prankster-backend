@@ -9,7 +9,8 @@ Simple server made together with little brother as home project to work as backe
 - `bundle install`
 
 **Localhost:**
-
+`bundle exec rerun 'rackup'`
+or simply
 `bundle exec rackup`
 
 *DB+schema reset:*
