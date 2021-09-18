@@ -35,8 +35,8 @@ class Parent < BaseModel
     return model
   end
 
-  def as_json(*)
-    super(
+  def json_full
+    as_json(
       include: [
         {
           child: {
@@ -46,7 +46,8 @@ class Parent < BaseModel
             ] 
           }
         }
-      ])
+      ]
+      )
   end
 end
 
@@ -67,9 +68,18 @@ class Child < BaseModel
 
     return model
   end
+  
+  def json_short
+    as_json(
+      only: [
+        :id,
+        :name
+      ])
+  end
 
-  def as_json(*)
-    super(
+
+  def json_full
+    as_json(
       include: [
         {
           parent: {

@@ -1,18 +1,13 @@
 
 ## Device info for Child
 
-post "/child/:id/device_info" do
-  id = params[:id].to_i
+post "/child/device_info" do
   auth_token = params[:auth_token].to_s
   platform = params[:platform].to_s
   push_id = params[:push_id].to_s
 
-  child = Child.find_by(id: id)
+  child = Child.find_by(auth_token: auth_token)
   if child == nil
-    return error_response(403, error: "not found", debug: "no child found with id: #{id}")
-  end
-
-  if child.auth_token != auth_token
       return error_response(401, error: "unauthorised")
   end
 
@@ -30,18 +25,13 @@ end
 
 ## Device info for Parent
 
-post "/parent/:id/device_info" do
-  id = params[:id].to_i
+post "/parent/device_info" do
   auth_token = params[:auth_token].to_s
   platform = params[:platform].to_s
   push_id = params[:push_id].to_s
 
-  parent=Parent.find_by(id: id)
+  parent = Parent.find_by(auth_token: auth_token)
   if parent == nil
-    return error_response(403, error: "not found", debug: "no parent found with id: #{id}")
-  end
-
-  if parent.auth_token != auth_token
       return error_response(401, error: "unauthorised")
   end
 
