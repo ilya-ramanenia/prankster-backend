@@ -15,6 +15,7 @@ or simply
 `bundle exec rackup`
 
 *DB+schema reset:*
+
 `bundle exec rake db:drop db:create db:migrate`
 
 `bundle exec rake db:seed` - populates with seed data
@@ -26,5 +27,10 @@ or simply
 `heroku login`
 
 *DB+schema reset:*
+
 `heroku pg:reset --confirm prankster-app`
 `heroku run rake db:migrate`
+
+*Logs:*
+
+`heroku logs --tail`
