@@ -37,15 +37,33 @@ class Parent < BaseModel
 
   def json_full
     as_json(
-      include: [
+      include: 
+      [
         {
-          child: {
-            only: [
+          child: 
+          {
+            only: 
+            [
               :id,
               :name
             ] 
           }
         }
+      ],
+      except: 
+      [
+        :auth_token
+      ]
+      )
+  end
+
+  def json_auth
+    as_json(
+      only: 
+      [
+        :id,
+        :name,
+        :auth_token
       ]
       )
   end
@@ -68,10 +86,11 @@ class Child < BaseModel
 
     return model
   end
-  
+
   def json_short
     as_json(
-      only: [
+      only: 
+      [
         :id,
         :name
       ])
@@ -80,10 +99,13 @@ class Child < BaseModel
 
   def json_full
     as_json(
-      include: [
+      include: 
+      [
         {
-          parent: {
-            only: [
+          parent: 
+          {
+            only: 
+            [
               :id,
               :name
             ] 
@@ -92,8 +114,22 @@ class Child < BaseModel
         :region,
         :region_status
       ],
-      except: [
+      except: 
+      [
         :parent_id,
+        :auth_token,
+        :connect_key
+      ])
+  end
+
+  def json_auth
+    as_json(
+      only: 
+      [
+        :id,
+        :name,
+        :auth_token,
+        :connect_key
       ])
   end
 end
@@ -108,11 +144,14 @@ class Region  < BaseModel
 
   def as_json(*)
     super(
-      only: [
+      only: 
+      [
         :name, 
         :lat, 
-        :long],
-      include: [
+        :long
+      ],
+      include: 
+      [
         :parent_created,
         :child_assigned
       ])
@@ -128,9 +167,11 @@ class RegionStatus  < BaseModel
 
   def as_json(*)
     super(
-      only: [
+      only: 
+      [
         :event, 
-        :created_at])
+        :created_at
+      ])
   end
 end
 
@@ -142,7 +183,8 @@ class DeviceInfo < BaseModel
 
   def as_json(*)
     super(
-      include: [
+      include: 
+      [
         :child,
         :parent
       ])

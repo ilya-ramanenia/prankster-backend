@@ -7,7 +7,7 @@ post "/child/create" do
   child = Child.build(name: name)
   child.save
 
-  success_response(201, response: child.json_full)
+  success_response(201, response: child.json_auth)
 end
 
 

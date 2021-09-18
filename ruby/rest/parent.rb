@@ -9,7 +9,7 @@ post "/parent/create" do
   parent = Parent.build(name: name)
   parent.save
 
-  success_response(201, response: parent.json_full)
+  success_response(201, response: parent.json_auth)
 end
 
 
