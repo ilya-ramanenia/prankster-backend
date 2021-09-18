@@ -54,7 +54,7 @@ class Schema0 < ActiveRecord::Migration[6.0]
       t.references :child
 
       t.string :push_id
-      t.column :platform, :string
+      t.column :client, :string, null: false
 
       t.timestamps
     end

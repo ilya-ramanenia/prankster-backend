@@ -48,6 +48,16 @@ class Parent < BaseModel
               :name
             ] 
           }
+        },
+        {
+          device_info: 
+          {
+            only: 
+            [
+              :push_id,
+              :client
+            ] 
+          }
         }
       ],
       except: 
@@ -108,6 +118,16 @@ class Child < BaseModel
             [
               :id,
               :name
+            ] 
+          }
+        },
+        {
+          device_info: 
+          {
+            only: 
+            [
+              :push_id,
+              :client
             ] 
           }
         },
@@ -176,17 +196,42 @@ class RegionStatus  < BaseModel
 end
 
 class DeviceInfo < BaseModel
-  enum platform: [ :ios, :android ]
+  enum client: { ios: "ios", android: "android" }
 
   belongs_to  :child
   belongs_to  :parent
 
-  def as_json(*)
-    super(
+  def json_full
+    as_json(
       include: 
       [
-        :child,
-        :parent
-      ])
+        {
+          child: 
+          {
+            only: 
+            [
+              :id,
+              :name
+            ] 
+          }
+        },
+        {
+          parent: 
+          {
+            only: 
+            [
+              :id,
+              :name
+            ] 
+          }
+        }
+      ],
+      except: 
+      [
+        :id,
+        :parent_id,
+        :child_id
+      ]
+      )
   end
 end

@@ -29,7 +29,7 @@ ActiveRecord::Schema.define(version: 2021_09_06_153559) do
     t.bigint "parent_id"
     t.bigint "child_id"
     t.string "push_id"
-    t.string "platform"
+    t.string "client", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["child_id"], name: "index_device_info_on_child_id"
