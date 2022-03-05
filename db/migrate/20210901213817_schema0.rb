@@ -8,6 +8,7 @@ class Schema0 < ActiveRecord::Migration[6.0]
     create_table :parent do |t|
       t.string :name
       t.string :auth_token
+      t.string :avatar_url
 
       t.timestamps
     end
@@ -17,6 +18,7 @@ class Schema0 < ActiveRecord::Migration[6.0]
 
       t.string :name
       t.string :auth_token
+      t.string :avatar_url
       t.string :connect_key
 
       t.timestamps

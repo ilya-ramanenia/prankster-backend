@@ -2,6 +2,8 @@ development:
   adapter: postgresql
   encoding: unicode
   pool: 2
+  username: "postgres"
+  password: "12345678"
   database: db/dev
 
 production:

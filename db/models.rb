@@ -45,7 +45,8 @@ class Parent < BaseModel
             only: 
             [
               :id,
-              :name
+              :name,
+              :avatar_url
             ] 
           }
         },
@@ -84,8 +85,8 @@ class Child < BaseModel
   has_one     :device_info
 
   belongs_to  :parent
-  has_many  :region, :inverse_of => "child_assigned"
-  has_many  :region_status
+  has_many    :region, :inverse_of => "child_assigned"
+  has_many    :region_status
 
   def self.build(name:)
     model = Child.new
@@ -102,7 +103,8 @@ class Child < BaseModel
       only: 
       [
         :id,
-        :name
+        :name,
+        :avatar_url
       ])
   end
 
@@ -117,7 +119,8 @@ class Child < BaseModel
             only: 
             [
               :id,
-              :name
+              :name,
+              :avatar_url
             ] 
           }
         },

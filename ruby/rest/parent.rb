@@ -1,5 +1,5 @@
-require 'sinatra/activerecord'
-
+# require 'sinatra/activerecord'
+require_relative '../common.rb'
 
 ## Create Parent (Entry point for parent user)
 
@@ -119,6 +119,7 @@ post "/parent/child/:child_id" do
   child_id = params[:child_id].to_i
   auth_token = params[:auth_token].to_s
   name = params[:name].to_s
+  avatar_url = params[:avatar_url].to_s
 
   parent = Parent.find_by(auth_token: auth_token)
   if parent == nil
@@ -136,6 +137,9 @@ post "/parent/child/:child_id" do
   end
 
   child.name = name
+  if avatar_url != nil
+    child.avatar_url = is_valid_url(avatar_url) ? avatar_url : nil
+  end
   child.save
 
   success_response(202, response: child.json_full)
